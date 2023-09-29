@@ -1,0 +1,76 @@
+gen_model:
+  model_name: meta-llama/Llama-2-7b-chat-hf
+  apply_model_parallel: True
+  tokenizer:
+    model_name: meta-llama/Llama-2-7b-chat-hf
+    padding_side: left
+    truncation_side: left
+    pad_token_as_eos_token: False
+  generation_kwargs:
+    do_sample: False
+    min_new_tokens: 1
+    max_new_tokens: 30
+
+reward_fn:
+  id: combine
+  args:
+    threshold: 0.9
+    lamb: -0.01
+    rouge_type: rougeL
+  # compression:
+  #   id: fixed_ratio
+  #   args:
+  #     coef: 1.0
+  # similarity:
+  #   id: rouge
+  #   args:
+  #     rouge_type: rougeL
+  #     coef: 1.0
+
+datapool:
+  id: gpteacher
+  args:
+    num_tokens_to_predict: 30
+
+env:
+  n_envs: 32
+  obs_space: FixedTokenObservation
+  act_space: BatchFixedTokenAction
+  args:
+    max_prompt_length: 128
+    max_episode_length: 1
+    terminate_on_eos: True
+
+alg:
+  id: pg_mask
+  args:
+    sample_k: 4
+    use_scst: true
+    n_steps: 1
+    gae_lambda: 1
+    gamma: 1
+    batch_size: 32
+    verbose: 1
+    learning_rate: 0.00001
+    normalize_advantage: false
+    #only_max: true
+    ent_coef: 0.001
+
+  policy:
+    id: BatchTokenPolicy
+    args:
+      model_name: distilroberta-base
+      lr_scheduler:
+
+train_evaluation:
+  eval_batch_size: 32 # deprecated
+  n_iters: 6
+  save_every: 1
+  eval_freq: 100000000 # deprecated
+  metrics:
+    - id: rouge_c
+    - id: rouge_r
+  generation_kwargs:
+    do_sample: False
+    min_new_tokens: 1
+    max_new_tokens: 128
