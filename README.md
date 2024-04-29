@@ -87,4 +87,4 @@ If you use this code or the findings of the study in your research, please cite 
 This code references the [RL4LMs by AllenAI](https://github.com/allenai/RL4LMs) and [gisting by Mu et al.](https://github.com/jayelm/gisting). We express our gratitude to the authors for their contributions to the field and for making their code publicly available.
 
 ## Contact
-For any questions or feedback, please contact nenomigami@gm.gist.ac.kr.
+For any questions or feedback, please contact ghdbsl98@gmail.com.
